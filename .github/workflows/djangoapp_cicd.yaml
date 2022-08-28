@@ -1,6 +1,8 @@
 # This workflow will install Python dependencies, run tests, lint
 # with a single version of Python (python 3.10)
 # then deploy to a remote server using SSH
+# The project folder and the apps folders must be in a folder named "src"
+# src/my_project and src/app_of_my_project
 name: Automatically Testing the Django Application
 
 # On push or pull_request on branch main
@@ -14,6 +16,7 @@ permissions:
   contents: read
 
 jobs:
+  # Build the app ===================
   test_then_deploy:
 
     runs-on: ubuntu-latest
@@ -31,12 +34,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    # Lint the app with flake8 ===================
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    # Test the app with pytest ===================
     - name: Test with pytest
       run: |
         pip install pytest-django
